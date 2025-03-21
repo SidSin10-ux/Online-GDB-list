@@ -13,6 +13,10 @@
         .status { font-weight: bold; color: #d35400; }
         button { background-color: #3498db; color: white; padding: 10px; border: none; cursor: pointer; }
         button:hover { background-color: #2980b9; }
+        .teacher-container { margin-top: 40px; background-color: #ecf0f1; padding: 20px; border-radius: 10px; }
+        .teacher-container h2 { color: #34495e; }
+        .teacher-submission { margin-bottom: 20px; padding: 10px; background-color: #ffffff; border: 1px solid #ccc; border-radius: 5px; }
+        .teacher-submission h3 { margin: 0; }
     </style>
 </head>
 <body>
@@ -25,6 +29,12 @@
     <section class="container">
         <h2>Coding Questions</h2>
         <div id="questions"></div>
+    </section>
+
+    <!-- Teacher's View of Submitted Codes -->
+    <section class="container teacher-container">
+        <h2>Teacher's View - Submitted Codes</h2>
+        <div id="teacher-view"></div>
     </section>
 
     <script>
@@ -42,11 +52,14 @@
         ];
 
         const container = document.getElementById("questions");
+        const teacherView = document.getElementById("teacher-view");
+
+        const submissions = []; // To store all submitted code
 
         questions.forEach((question, index) => {
             const div = document.createElement("div");
             div.className = "question-container";
-            div.innerHTML = `
+            div.innerHTML = `  
                 <h3>${question}</h3>
                 <textarea id="code-${index}" placeholder="Write your code here..."></textarea>
                 <br>
@@ -57,8 +70,34 @@
         });
 
         function submitCode(index) {
+            const code = document.getElementById(`code-${index}`).value;
+            
+            // Change the status of the submission
             document.getElementById(`status-${index}`).textContent = "Status: Submitted";
             document.getElementById(`status-${index}`).style.color = "green";
+            
+            // Store the code submission in the submissions array
+            submissions[index] = code;
+
+            // Update teacher's view with the submitted code
+            updateTeacherView();
+        }
+
+        // Function to update the teacher's view with the submitted code
+        function updateTeacherView() {
+            teacherView.innerHTML = ''; // Clear current view
+
+            submissions.forEach((code, index) => {
+                if (code) { // Only show submissions that have code
+                    const submissionDiv = document.createElement("div");
+                    submissionDiv.className = "teacher-submission";
+                    submissionDiv.innerHTML = `
+                        <h3>Question ${index + 1}: ${questions[index]}</h3>
+                        <pre>${code}</pre>
+                    `;
+                    teacherView.appendChild(submissionDiv);
+                }
+            });
         }
     </script>
 </body>
